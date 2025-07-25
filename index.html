@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Will You Go Out With Me?</title>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Quicksand', sans-serif;
+      background-color: #0d0d0d;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin: 20px;
+      animation: fadeIn 1s ease-in-out forwards;
+      color: #ff99cc;
+      text-shadow: 0 0 12px #ff99cc;
+      font-weight: 600;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 14px 28px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+    }
+
+    #yesBtn {
+      background: linear-gradient(135deg, #ff4081, #ff80ab);
+      color: white;
+      box-shadow: 0 0 15px #ff80ab;
+    }
+
+    #yesBtn:hover {
+      transform: scale(1.1);
+    }
+
+    #noBtn {
+      background: linear-gradient(135deg, #ff1744, #d50000);
+      color: white;
+      box-shadow: 0 0 15px #d50000;
+    }
+
+    .message {
+      margin-top: 40px;
+      font-size: 1.6rem;
+      color: #fff176;
+      text-shadow: 0 0 5px #fff176;
+      font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .heart-burst {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: red;
+      transform: rotate(45deg);
+      animation: burst 1s ease-out forwards;
+    }
+
+    .heart-burst::before,
+    .heart-burst::after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .heart-burst::before {
+      top: -5px;
+      left: 0;
+    }
+
+    .heart-burst::after {
+      left: -5px;
+      top: 0;
+    }
+
+    @keyframes burst {
+      0% { opacity: 1; transform: rotate(45deg) scale(1); }
+      100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+    }
+
+    .popup {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 20px 30px;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      color: #d50000;
+      box-shadow: 0 0 12px #fff;
+      display: none;
+      z-index: 10000;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+        padding: 0 20px;
+      }
+
+      button {
+        font-size: 1.1rem;
+        padding: 10px 20px;
+      }
+
+      .message {
+        font-size: 1.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1 id="question">Will you go out with me? 💌</h1>
+
+  <div class="buttons">
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 😢</button>
+  </div>
+
+  <div class="message" id="message"></div>
+  <div class="popup" id="popup">Yay! Can’t wait to see you Thursday! 💞</div>
+
+  <!-- Romantic background music (Love Story - Bensound) -->
+  <audio id="bgMusic" src="https://www.bensound.com/bensound-music/bensound-love.mp3"></audio>
+
+  <script>
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const question = document.getElementById('question');
+    const message = document.getElementById('message');
+    const popup = document.getElementById('popup');
+    const music = document.getElementById('bgMusic');
+
+    let noClicks = 0;
+    let popupShown = false;
+
+    yesBtn.addEventListener('click', () => {
+      yesBtn.remove();
+      noBtn.remove();
+      question.textContent = "";
+      message.textContent = "Awww 😍 Can't wait for Thursday!";
+      if (!popupShown) {
+        popup.style.display = "block";
+        popupShown = true;
+      }
+      playMusic();
+      heartBurstConfetti();
+    });
+
+    noBtn.addEventListener('click', () => {
+      noClicks++;
+
+      if (noClicks === 1) {
+        question.textContent = "Please...? 🥹";
+      } else if (noClicks === 2 || noClicks === 3) {
+        question.textContent = noClicks === 3 ? "Come on... 🥺" : question.textContent;
+        moveButtonRandomly(noBtn);
+      } else if (noClicks === 4) {
+        document.body.style.animation = 'glitch 0.3s infinite';
+        question.textContent = "System Error... Saying yes is mandatory 😵‍💫";
+      } else {
+        noBtn.remove();
+        question.textContent = "Only one path remains 😈";
+      }
+    });
+
+    function moveButtonRandomly(button) {
+      const btnWidth = button.offsetWidth;
+      const btnHeight = button.offsetHeight;
+      const x = Math.random() * (window.innerWidth - btnWidth - 20);
+      const y = Math.random() * (window.innerHeight - btnHeight - 20);
+      button.style.position = 'absolute';
+      button.style.left = `${x}px`;
+      button.style.top = `${y}px`;
+    }
+
+    function heartBurstConfetti() {
+      for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.classList.add('heart-burst');
+          heart.style.left = Math.random() * window.innerWidth + 'px';
+          heart.style.top = Math.random() * window.innerHeight + 'px';
+          document.body.appendChild(heart);
+          setTimeout(() => heart.remove(), 1000);
+        }, i * 10);
+      }
+    }
+
+    function playMusic() {
+      music.play().catch(() => {
+        console.log("Autoplay prevented — user needs to tap to play.");
+      });
+    }
+  </script>
+</body>
+</html>
